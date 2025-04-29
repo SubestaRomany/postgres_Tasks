@@ -1,0 +1,165 @@
+sudo -u postgres psql
+
+postgres=# create database plab1;
+CREATE DATABASE
+postgres=# \c plab1
+You are now connected to database "plab1" as user "postgres".
+
+plab1=# CREATE TABLE track (
+plab1(#     id SERIAL PRIMARY KEY,
+plab1(#     track_name VARCHAR(100)
+plab1(# );
+CREATE TABLE
+plab1=# 
+plab1=# CREATE TABLE subject (
+plab1(#     id SERIAL PRIMARY KEY,
+plab1(#     sub_name VARCHAR(100),
+plab1(#     max_score INTEGER
+plab1(# );
+CREATE TABLE
+plab1=# 
+plab1=# CREATE TABLE exam (
+plab1(#     id SERIAL PRIMARY KEY,
+plab1(#     date DATE
+plab1(# );
+CREATE TABLE
+plab1=# 
+plab1=# CREATE TABLE student (
+plab1(#     id SERIAL PRIMARY KEY,
+plab1(#     e_name VARCHAR(100),
+plab1(#     email VARCHAR(100),
+plab1(#     address TEXT
+plab1(# );
+CREATE TABLE
+
+plab1=# ALTER TABLE student
+plab1-# ADD COLUMN birth_date DATE;
+ALTER TABLE
+plab1=# 
+plab1=# 
+plab1=# ALTER TABLE student
+plab1-# ADD COLUMN gender VARCHAR(10)
+plab1-# CHECK (gender IN ('Male', 'Female'));
+ALTER TABLE
+plab1=# 
+plab1=# 
+plab1=# ALTER TABLE student
+plab1-# ADD COLUMN track_id INTEGER;
+ALTER TABLE
+plab1=# 
+plab1=# ALTER TABLE student
+plab1-# ADD CONSTRAINT fk_student_track
+plab1-# FOREIGN KEY (track_id) REFERENCES track(id);
+ALTER TABLE
+
+plab1=# CREATE TABLE grades (
+plab1(#     stu_id INTEGER,
+plab1(#     sub_id INTEGER,
+plab1(#     exam_id INTEGER,
+plab1(#     grade INTEGER,
+plab1(#     PRIMARY KEY (stu_id, sub_id, exam_id)
+plab1(# );
+CREATE TABLE
+plab1=# 
+plab1=# CREATE TABLE stu_sub (
+plab1(#     stu_id INTEGER,
+plab1(#     sub_id INTEGER,
+plab1(#     PRIMARY KEY (stu_id, sub_id)
+plab1(# );
+CREATE TABLE
+plab1=# 
+plab1=# CREATE TABLE track_sub (
+plab1(#     track_id INTEGER,
+plab1(#     sub_id INTEGER,
+plab1(#     PRIMARY KEY (track_id, sub_id)
+plab1(# );
+CREATE TABLE
+plab1=# ALTER TABLE grades
+plab1-# ADD FOREIGN KEY (stu_id) REFERENCES student(id);
+ALTER TABLE
+plab1=# 
+plab1=# ALTER TABLE grades
+plab1-# ADD FOREIGN KEY (sub_id) REFERENCES subject(id);
+ALTER TABLE
+plab1=# 
+plab1=# ALTER TABLE grades
+plab1-# ADD FOREIGN KEY (exam_id) REFERENCES exam(id);
+ALTER TABLE
+plab1=# 
+plab1=# ALTER TABLE stu_sub
+plab1-# ADD FOREIGN KEY (stu_id) REFERENCES student(id);
+ALTER TABLE
+plab1=# 
+plab1=# ALTER TABLE stu_sub
+plab1-# ADD FOREIGN KEY (sub_id) REFERENCES subject(id);
+ALTER TABLE
+
+plab1=# ALTER TABLE track_sub
+plab1-# ADD FOREIGN KEY (track_id) REFERENCES track(id);
+ALTER TABLE
+plab1=# 
+plab1=# ALTER TABLE track_sub
+plab1-# ADD FOREIGN KEY (sub_id) REFERENCES subject(id);
+ALTER TABLE
+
+
+plab1=# INSERT INTO track (track_name) VALUES
+plab1-# ('Web'), ('AI'), ('Mobile');
+INSERT 0 3
+plab1=# 
+plab1=# 
+plab1=# INSERT INTO subject (sub_name, max_score) VALUES
+plab1-# ('Python', 100), ('Math', 90), ('English', 95);
+INSERT 0 3
+plab1=# 
+plab1=# 
+plab1=# INSERT INTO exam (date) VALUES
+plab1-# ('2024-01-01'), ('2024-02-01'), ('2024-03-01');
+INSERT 0 3
+plab1=# 
+plab1=# 
+plab1=# INSERT INTO student (e_name, email, address, birth_date, gender, track_id) VALUES
+plab1-# ('Ahmed Ali', 'ahmed@example.com', 'Cairo', '1990-08-10', 'Male', 1),
+plab1-# ('Amira Adel', 'amira@example.com', 'Giza', '1994-06-15', 'Female', 2),
+plab1-# ('Alaa Hassan', 'alaa@example.com', 'Alex', '1989-12-05', 'Male', 3);
+INSERT 0 3
+plab1=# 
+plab1=# 
+plab1=# INSERT INTO stu_sub VALUES (1, 1), (2, 2), (3, 3);
+INSERT 0 3
+plab1=# 
+plab1=# 
+plab1=# INSERT INTO track_sub VALUES (1, 1), (2, 2), (3, 3);
+INSERT 0 3
+plab1=# 
+plab1=# 
+plab1=# INSERT INTO grades VALUES
+plab1-# (1, 1, 1, 95),
+plab1-# (2, 2, 2, 85),
+plab1-# (3, 3, 3, 90);
+INSERT 0 3
+
+
+plab1=# SELECT * FROM student
+plab1-# WHERE gender = 'Male' AND birth_date < '1991-10-01';
+plab1=# SELECT * FROM student
+plab1-# WHERE e_name LIKE 'A%';
+plab1=# SELECT sub_name, max_score FROM subject
+plab1-# ORDER BY max_score DESC;
+ sub_name | max_score 
+----------+-----------
+ Python   |       100
+ English  |        95
+ Math     |        90
+(3 rows)
+
+plab1=# SELECT sub_name, max_score FROM subject
+plab1-# ORDER BY max_score DESC
+plab1-# LIMIT 1;
+ sub_name | max_score 
+----------+-----------
+ Python   |       100
+(1 row)
+
+plab1=# 
+
